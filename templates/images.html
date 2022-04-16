@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta charset=UTF-8>
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/public/css/lightbox.css">
+    <title>Filegai</title>
+</head>
+<body>
+
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+
+<script>
+// for dialog showing
+function show_dialog(id,wide){
+    $(id).css("position","fixed");
+    if(wide){
+        $(id).css({'top':window.innerHeight/10,'left':window.innerWidth/10});
+    }else{
+        $(id).css({'top':window.innerHeight/3,'left':window.innerWidth/2-200});
+    }    
+    $(id).css("background-color",'white');
+    $(id).draggable();
+    $(id+' .buttonCancel').click(function(){
+        $(id).hide(100);
+    });
+    $(id+' .close2').click(function(){
+        $(id).hide(100);
+    });
+}
+
+function PostNewName(tag,new_name){
+    $.post("/image_cname",{"tag":tag,"new_name":new_name},function(data,status){
+        if(status=="success" && data.match(/^\!\!/)){
+            $("#img_name_"+tag).html(new_name);
+        }else{
+            alert("not changed"+data.substr(2));
+        }
+    });
+}
+
+function RenameImage(tag){
+    show_dialog("#rename_dialog",false);
+    $("#rename_dialog").show(100);
+    $("#new_name").val($.trim($('#img_name_'+tag).html()));
+    $("#submit_rename").unbind("click").click(function(){    
+        event.preventDefault();	//阻滞二次提交
+        $("#rename_dialog").hide(100);
+        new_name = $("#new_name").val();
+        PostNewName(tag,new_name);       
+    });
+}
+
+function ChangeImage(tag){
+    show_dialog("#change_image_dialog",false);
+    $("#change_image_dialog").show(100);
+    $("#target_tag").val(tag);
+    $("#upload_submit").unbind("click").click(function(){
+        
+        formdata = new FormData();
+        if($("#file_uploader").prop('files').length > 0){
+            file =$(file_uploader).prop('files')[0];
+            formdata.append("file", file);
+            formdata.append("tag", $("#target_tag").val());
+        }
+        jQuery.ajax({
+            url: "/image_update",
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.match(/^!!/)){
+                    img_href = $("#img_"+result.substr(2)).attr("src");
+                    if (img_href.match(/get_image_r/)){
+                        $("#img_"+result.substr(2)).attr("src","/get_image/"+result.substr(2));
+                    }else{
+                        $("#img_"+result.substr(2)).attr("src","/get_image_r/"+result.substr(2));
+                    }
+                    $("#change_image_dialog").hide(100);
+                }
+            }
+        });
+        event.preventDefault();	//阻滞二次提交
+        
+    });
+
+
+}
+</script>
+
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list'>Root</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href='/'>Status</a></li>
+        <li><a href="/settings">Settings</a></li>     
+    </ul>
+    <ul class='top_bar_right'>        
+        <li><a href="/notes_orphans">Orphans</a></li>             
+    </ul> 
+    
+</div>
+
+<div class="image_list">
+    <div class='layui-box layui-laypage'>
+    {{.page_bar | unescapeHtmlTag }}
+    </div>
+<hr />
+
+{{ range .images}}
+<div class='img_wrap'>
+    <div class='img_self'>
+    <a href="/get_image/{{.Tag}}" data-lightbox="gallary"  data-title="{{.Name}}" ><img id="img_{{.Tag}}" src="/get_image/{{.Tag}}"  width="250px"></a>
+    </div>
+    <div class='img_desc' id="img_name_{{.Tag}}">
+        {{.Name}}
+    </div>
+    <div class='img_options'>
+        <a href="javascript:ChangeImage('{{.Tag}}')"> change</a>&nbsp;&nbsp;&nbsp;&nbsp; 
+        <a href="javascript:RenameImage('{{.Tag}}')"> rename</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="/track/{{.Tag}}">Track</a>
+    </div>
+</div>
+{{end}}
+
+</div>
+
+
+
+<!--图片重命名-->
+<div id="rename_dialog" class="dialog">    
+	<div style="text-align:right; background-color:#CCC;">
+       <span class="close2"><img src="/public/css/close.gif" width="48" height="20" alt="X" /></span>
+    </div>
+	<div class="dialogContent">
+		<h3 align="center" id="dialog_rename_title">Change the image name</h3>
+		<form action="" method="POST"	enctype="multipart/form-data" name="form_rename"  id='form_rename'>
+        <p>&nbsp;</p>
+        <p align="center"> <input type="text" name="new_name" id="new_name" style="width:90%;" /></p>	
+        <p>&nbsp;</p>
+        <p align="center"> 
+            <input type="button" class="commonButton buttonCancel" value="Cancel" > &nbsp; &nbsp;&nbsp; &nbsp;
+            <input type="submit" class="commonButton" value="OK" id="submit_rename">
+            <input type="hidden" name="rename_tag" id="dialog_rename_tag">
+        </p> 
+		</form>
+	</div>
+</div>
+
+
+<!-- 上传文件的对话框 -->
+<div id="change_image_dialog" class="dialog">    
+<div style="text-align:right; background-color:#CCC;"><span class="close2"><img src="/public/css/close.gif" width="48" height="20" alt="X" /></span></div>
+	<div class="dialogContent">
+	<h2 align="center">Change Image</h2>
+	<form action="/image_update" method="post"	enctype="multipart/form-data" name="form_upload" id='form_change_image'>
+    <p></p>
+    <table border="0" class="uploadTable">
+        <tr>
+        <td width="30" align="left"><label for="file">Select:</label></td>
+        <td><input type="file" name="file" id="file_uploader" accept="image/*"/></td>
+        </tr>
+        <tr>
+        <td >&nbsp;</td>
+        <td>&nbsp;</td>
+        </tr>
+      
+        <tr>
+        <td>Action</td>
+        <td><input type="button" value="Cancel"  class="commonButton buttonCancel" />&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="button" id="upload_submit" name="submit" value="Upload" class="commonButton" />
+		    <input type="hidden" name="tag" id='target_tag'/>
+        </td>
+        </tr>
+    </table>
+
+       
+	</form>
+	</div>
+</div>
+
+<!-- 结束！ 上传文件的对话框 -->
+
+<script src="/public/js/lightbox.js"></script>
+</body>
+</html>
