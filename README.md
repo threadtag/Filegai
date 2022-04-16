@@ -1,4 +1,4 @@
-# Filegai : A local database for taking notes for the of local files
+# Filegai : A local database for taking notes for the local files
 
 ## Why do I need another note database?
 As a molecular biology technician, I have lots of literatures (most of them are PDF files) on my local drive. Usually, these files will be read and left with highlighting marks, which I call them biological marks. I found myself always forget where my knowlege of something came from, from which file to be specifically.From time to time, a quick check of the papers is necessary.
