@@ -3,24 +3,25 @@
 <html>
 <head>
     <title>Error </title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
     <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
     <script src="/public/layui/layui.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="top_bar">
     <ul class="top_bar_left">
-
-        <li><a href='/list'>Root</a></li>
+        <li><a href='/list'>Files</a></li>
+        <li><a href="/articles/1">Articles</a></li>
         <li><a href="/file_notes/1">Notes</a></li>
         <li><a href="/list_image/1">Images</a></li>
-        <li><a href='/'>Status</a></li>
-        <li><a href="javascript:Rebuild();">Rebuild</a></li>
-        <li><a href="/settings">Settings</a></li>        
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/' class="active">Status</a></li>      
     </ul>
     <ul class='top_bar_right'>
         <li id="btn_workspace"> 
-            <a href="#"><i class="layui-icon layui-icon-down layui-font-12"></i>workspace </a>
+            <a href="#"><!--i class="layui-icon layui-icon-down layui-font-12"></i-->workspace </a>
         </li>
+        <li><a href="javascript:Rebuild();">Rebuild</a></li>
         
     </ul>  
 </div>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Filegai-Articles</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/article.css" />
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+    <style>
+        .setting_select{width: 100px; height: 25px; clear: right;  margin-top:10px;}
+        .setting_label{width: 200px; height: 25px; float:left; margin-top:10px;display:block;text-align: right; padding-right: 1em; }
+        .setting_textarea{width: 500px; clear: right;  margin-top:10px;}
+    </style>
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+
+<script>
+// for dialog showing
+function show_dialog(id,wide){
+    $(id).css("position","fixed");
+    if(wide){
+        $(id).css({'top':window.innerHeight/10,'left':window.innerWidth/10});
+    }else{
+        $(id).css({'top':window.innerHeight/3,'left':window.innerWidth/2-200});
+    }    
+    $(id).css("background-color",'white');
+    $(id).draggable();
+    $(id+' .buttonCancel').click(function(){
+        $(id).hide(100);
+    });
+    $(id+' .close2').click(function(){
+        $(id).hide(100);
+    });
+}
+
+function PostSettings(){
+    $.post("/settings",{
+            "img_page_len":$("#img_page_len").val(),
+            "notes_page_len":$("#notes_page_len").val(),
+            "article_list_len":$("#article_list_len").val(),
+            "wrap_class":$("#wrap_class").val(),
+            "openers":$("#openers").val()
+    },function(data,status){
+        if(status=="success" && data.match(/^\!\!(\w+)/)){
+            alert("Done");
+        }else{
+            alert("Failed");
+        }
+    });
+}
+
+$(function(){
+    $("#btn_submit").unbind("click").click(function(){
+        PostSettings();
+        event.preventDefault();
+    });
+});
+
+</script>
+
+
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list'>Files</a></li>
+        <li><a href="/articles/1">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings" class="active">Settings</a></li>
+        <li><a href='/'>Status</a></li> 	
+    </ul>
+</div>
+
+<div class="content_wrap">
+    <form name="settings" method="POST" action="/settings">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>Universal Settings</legend>
+        </fieldset>
+
+        <br/>
+        <label for ="img_page_len" class="setting_label">Image List page length:</label>
+        <select name="img_page_len" id="img_page_len" value="{{.img_page_len}}"  class="setting_select">
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="64">64</option>
+        </select>
+        <br/>
+        <label for ="notes_page_len" class="setting_label">Nots List page length:</label>
+        <select name="notes_page_len" id="notes_page_len" value="{{.notes_page_len}}" class="setting_select">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        <br/>
+        <label for ="article_list_len" class="setting_label">Article List page length:</label>
+        <select name="article_list_len"  id="article_list_len" value="{{.article_list_len}}" class="setting_select">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        <br/>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>Content View on this PC</legend>
+    </fieldset>
+        <label for ="wrap_class" class="setting_label">Content view width:</label>
+        <select name="wrap_class"  id="wrap_class" value="{{.wrap_class}}" class="setting_select">
+            <option value="content_wrap">normal</option>
+            <option value="content_wrap_wide">wide</option>
+            <option value="content_wrap_wider">wider</option>
+        </select>
+        <br/>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>File Opener on this PC</legend>
+    </fieldset>
+    
+        <label for="opener_area" class="setting_label">File Opener</label>
+        <textarea name="opener_area" class="setting_textarea" rows="10" id="openers">{{.openers}}</textarea>
+        
+        <br/>
+        <hr /> 
+        <br/><br/>
+        <label for="blank" class="setting_label">&nbsp;</label>        
+        <input type="submit" class="commonButton" value="Submit" id="btn_submit" /> 
+            
+    </form>
+   
+</div>
+
+
+</div>
+</body>
+</html>

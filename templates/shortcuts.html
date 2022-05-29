@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Filegai</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/public/css/lightbox.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
+    <link rel="shortcut icon " type="images/x-icon" href="/favicon.ico">
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+<script type="text/javascript" src="/public/js/md5.js"></script>
+<script src="/public/layui/layui.js" charset="utf-8"></script>
+<script>
+// layui.use(['dropdown', 'util', 'layer'], function(){
+//     var dropdown = layui.dropdown,
+//             util = layui.util,
+//            layer = layui.layer,
+//                $ = layui.jquery;
+
+    // for workspace
+    // dropdown.render({
+    //     elem: '#btn_workspace',
+    //     data: 
+    //     [   
+    //         { title: 'Folders',
+    //             isSpreadItem: true,
+    //             type: 'group',  //菜单类型，支持：normal/group/parent/-
+    //             child:to_json({{.workspace_folders }})
+    //         },
+
+    //         { type: '-'},
+    //         { title: 'Files',isSpreadItem: false,
+    //             id: 102,type: 'parent',
+    //             child:to_json({{.workspace_files }})
+    //         },
+    //         { type: '-'},
+    //         { 
+    //             title: 'Manage',              
+    //             href: '/manange_shortcut'
+    //         }
+    //     ]
+                
+    // });
+function shortcut_del(scid){
+    dev_ino="{{.dev_ino }}";
+    if (!confirm("Are you sure to down the file to this location?")){
+        return false;
+    }
+    $.get("/del_shortcut_id/"+scid,function(data,staus){
+        if(data.match(/^\!\!/)){
+            $("#line_"+scid).css("display","none");
+        }else{
+            alert("failed:"+data)
+        }
+
+    });
+    // $.post("/putdown",{"scid":scid},function(data,staus){
+    //     if(data.match(/^\!\!/)){
+    //         $("#line_"+scid).css("display","none");
+    //     }else{
+    //         alert("failed:"+data)
+    //     }
+    // });
+}
+
+</script>    
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list' class="active">Files</a></li>
+        <li><a href="/articles/1">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li> 
+    </ul>
+    <ul class='top_bar_right'>
+        <li>Shortcuts</li>       
+    </ul>  
+</div>
+
+<div class="{{.wrap_class}}">
+    <li id="btn_workspace"> 
+        <a href="#">workspace </a>
+    </li>
+    <div class="file_nav">
+        <div class="file_nav_left">
+            <a href="/list">
+            <i class="layui-icon layui-icon-up" style="font-size:30px"></i>Root
+            </a>
+        </div>
+    </div>
+    <div class="file_containner">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>Pinned Folders and Files in Workspace</legend>
+        </fieldset>
+
+    
+        <ul class="shortcut_opt_list">
+        {{ range .pin_folders}}
+        <li id="line_{{.Scid}}"><img  src="/public/css/close.png" style=" display:inline-block;" onclick="javascript:shortcut_del({{.Scid}});"/>&nbsp;&nbsp;{{ .File_dir}}{{.File_name}}  </li>
+        {{end}}
+
+        {{ range .pin_files}}
+        <li id="line_{{.Scid}}"><img  src="/public/css/close.png" style=" display: inline-block;" onclick="javascript:shortcut_del({{.Scid}});"/>&nbsp;&nbsp;{{ .File_dir}}{{.File_name}}  </li>
+        {{end}}
+        </ul>
+        
+    </div>
+
+    <hr>
+    <div class="file_containner">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>Stashed Folder and Files for moving</legend>
+        </fieldset>
+            
+
+        <ul class="shortcut_opt_list">
+        {{ range .stash_folders}}
+        <li id="line_{{.Scid}}"><img  src="/public/css/close.png" style=" display: inline-block;" onclick="javascript:shortcut_del({{.Scid}});"/>&nbsp;&nbsp;{{ .File_dir}}{{.File_name}}  </li>
+        {{end}}
+
+        {{ range .stash_files}}
+        <li id="line_{{.Scid}}"><img  src="/public/css/close.png" style=" display: inline-block;" onclick="javascript:shortcut_del({{.Scid}});"/>&nbsp;&nbsp;{{ .File_dir}}{{.File_name}}  </li>
+        {{end}}
+        </ul>
+    </div>
+</div>
+
+ 
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Filegai-Article</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/article.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
+    <link rel="stylesheet" type="text/css" href="/public/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/public/css/prism.css">
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+<script src="/public/js/prism.js"></script>
+<script>
+function DelArticlePage(pg_tag){
+    ok = confirm("Are you sure to delete this note?");
+    if(ok){
+        $.post("/del_article_page",{"pg_tag":pg_tag},function(data,status){
+            if(status=="success" && data.match(/^\!\!(\w+)/)){
+                $("#"+pg_tag).remove();            
+            }else{
+                alert("update failed");
+            }            
+        });
+    }
+}
+var edit_locked=true;  
+function lock_edit(){
+	if(edit_locked){
+		$(".ref_list_opt").css("display","block");
+		edit_locked = !edit_locked ;
+        $("#locker").html("Lock");
+
+	}else{
+		$(".ref_list_opt").css("display","none");
+		edit_locked = !edit_locked ;
+        $("#locker").html("Unlock");
+	}
+}
+
+</script>
+
+
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list'>Files</a></li>
+        <li><a href="/articles/1" class="active">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li> 	
+    </ul>
+   
+    <ul class='top_bar_right'>
+        <li><a href="/article_page/{{.article_tag}}_">Add</a></li>
+        <li><a href="/show_article_sort/{{.article_tag}}">Sort</a></li>
+        <li><a href="javascript:lock_edit()" id="locker">Unlock</a></li>        
+    </ul> 
+</div>
+
+<div class="{{.wrap_class}} content_view">
+    {{with .article}}
+    <div class="note_rf_title">
+       {{.Title}}
+    </div>
+    {{end}}
+    <div class="note_rf_abstract"></div>
+
+    <div id='note_ref_list'>
+        {{range .pages}}
+        <div class='ref_note' id='{{.Pg_tag}}'>
+            <div class='ref_list_opt'>                 
+                <div class='ref_list_edit'>
+                    <a href='/article_page/{{.Tag}}_{{.Pg_tag}}'><img src='/public/css/option.png'></a>
+                </div>
+                <div class='ref_list_del'>
+                    <a href='javascript:DelArticlePage("{{.Pg_tag}}")'><img src='/public/css/close.png'></a>
+                </div>
+            </div>
+            <div class="note_body">
+                {{.Data| unescapeHtmlTag}}
+            </div>
+            <div class='ref_title_down'>
+                <div class='ref_footnote'>{{.Pdate}}</div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+   
+</div>
+
+</body>
+</html>

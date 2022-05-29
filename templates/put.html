@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Filegai</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/public/css/lightbox.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
+    <link rel="shortcut icon " type="images/x-icon" href="/favicon.ico">
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+<script type="text/javascript" src="/public/js/md5.js"></script>
+<script src="/public/layui/layui.js" charset="utf-8"></script>
+<script>
+var Color_coden={"green":1,"red":2,"blue":3,"purple":4,"orange":5,"yellow":6,"grey":7};
+function get_color_code(color){
+    //color=$("#color_tag").attr("class").split("_")[1];
+    if(Color_coden[color]==undefined){
+        return 0;
+    }else{
+        return Color_coden[color];
+    }
+}
+
+function get_color_by_code(c){
+    for (color in Color_coden){
+        if (Color_coden[color] == c){
+            return color;
+        }        
+    }
+    return "green"; // default
+}
+
+// utility functions
+function FileNamePostfix(file_name){
+    if (file_name.match(/\./)){
+        _do_index = file_name.lastIndexOf(".");
+        return file_name.substring(_do_index + 1); // 到最后一个字符
+    }else{
+        return file_name;
+    }
+}
+
+function FileNamePrefix(file_name){
+    if (file_name.match(/\./)){
+        _do_index = file_name.lastIndexOf(".");
+        return file_name.substring(0, _do_index); // 到最后一个字符
+    }else{
+        return "";
+    }
+}
+
+
+function PutDown(scid){
+    dev_ino="{{.dev_ino }}";
+    if (!confirm("Are you sure to down the file to this location?")){
+        return false;
+    }
+    $.post("/putdown",{"dev_ino":dev_ino,"scid":scid},function(data,staus){
+        if(data.match(/^\!\!/)){
+            $("#line_"+scid).css("display","none");
+        }else{
+            alert("failed:"+data)
+        }
+    });
+}
+
+
+</script>    
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list' class="active">Files</a></li>
+        <li><a href="/articles/1">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li> 
+    </ul>
+    <ul class='top_bar_right'>
+        <li><a href="javascript:toggle_stash_folder('{{.dev_ino}}')">&nbsp;</a></li>       
+    </ul>  
+</div>
+
+<div class="{{.wrap_class}}">
+    <h1><a href ="/nav/{{.dev_ino}}" id="nav_folder_name" class="{{.stash_class}}">{{.url}}</a></h1>
+    <div class="file_nav">
+        <div class="file_nav_left">
+            <a href="/list/{{.dev_ino}}">
+            <i class="layui-icon layui-icon-up" style="font-size:30px"></i>BACK
+            </a>
+        </div>
+  
+        <div class="file_nav_right" id ="add_shortcut" value="{{.shortcut_value}}">         
+            <a href='javascript:toggle_shortcut_folder("{{.dev_ino}}")'> 
+            <i class="layui-icon {{.shortcut_icon}}" style="font-size:30px" id="shortcut_icon_{{.dev_ino}}"></i>  
+            </a>
+            <span id="folder_stash" value="{{.stash_value}}"></span>            
+        </div>
+    </div>
+    <div class="folder_containner">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>Folders</legend>
+        </fieldset>
+
+        <div class="layui-collapse" lay-filter="test">
+            {{ range .list_folder}}
+            <div class="layui-colla-item" id="line_{{.Scid}}">
+                <h2 class="layui-colla-title" >                               
+                    <p>{{ .File_dir}}{{.File_name}}
+                        <input type ="button" class="putButton" title="{{.Scid}}" onclick="javascript:PutDown('{{.Scid}}');" value="Put down" />    
+                    </p>                        
+                </h2>
+            </div>
+            {{end}}
+        </div> 
+    </div>
+
+    <hr>
+    <div class="file_containner">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>Files</legend>
+        </fieldset>
+            
+        <div class="layui-collapse" lay-filter="test" >
+            {{range .list_file}}
+            <div class="layui-colla-item" id="line_{{.Scid}}">
+                <h2 class="layui-colla-title" >                               
+                    <p>{{ .File_dir}}{{.File_name}}
+                        <input type ="button" class="putButton" title="{{.Scid}}" onclick="javascript:PutDown('{{.Scid}}');" value="Put down" />
+                    </p>                           
+                </h2>
+            </div>
+            {{end}}
+        </div>     
+        
+
+    </div>
+</div>
+
+ 
+</body>
+</html>

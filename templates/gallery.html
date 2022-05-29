@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Root Init</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <script src="/public/layui/layui.js" charset="utf-8"></script>
+
+</head>
+<body>
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list' class="active">Files</a></li>
+        <li><a href="/articles/1">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li>        
+    </ul>
+    <ul class='top_bar_right'>
+        <li><a href="/list/{{.dev_ino}}">Back</a></li>   
+    </ul>  
+</div>
+<div class="{{.wrap_class}}">
+    <div id="app">
+        <div class="">
+            <div
+                v-for="(src, index) in imgs"
+                :key="index"
+                class="pic"
+                @click="() => showImg(index)"
+            >
+                <img :src="src" style="max-width: 800px;">
+            </div>
+        </div>
+        <vue-easy-lightbox
+        :visible="visible"
+        :imgs="imgs"
+        @hide="handleHide"
+        >
+        </vue-easy-lightbox>
+    </div>
+</div>
+    
+<script src="/public/js/vue.js"></script>
+<script src="/public/js/vue-easy-lightbox.umd.min.js"></script>
+<script>
+    var app = new Vue({
+    el: '#app',
+    data: {
+        visible: false,
+        imgs: [ 
+        {{ range .image_list}}
+        {{.}}
+        ,    
+        {{end}}
+        ]
+    },
+    methods: {
+        showImg (index) {
+        this.index = index
+        this.visible = true
+        },
+        handleHide () {
+        this.visible = false
+        }
+    }
+    })
+</script>
+</body>
+</html>

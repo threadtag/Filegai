@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Filegai</title>
-        <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
-        <link rel="stylesheet" href="/public/css/lightbox.css">
-        <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
-        <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/public/css/lightbox.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
+    <style>
+    #dev_ino_options {width:715px;border-top: 2px solid #ccc; line-height: 1.5em;}
+    </style>
 </head>
 <body>
 <script type="text/javascript" src="/public/js/jquery.js"></script>
@@ -86,9 +89,8 @@ layui.use(['dropdown', 'util', 'layer','laypage'], function(){
         trigger: 'mouseenter',
         delay:1500,
         data: [
-            {title: '<span>Add/Edit</span>',    id: "add"},
+            {title: '<span>Retrace</span>',    id: "retrace"},
             {title: '<span>Del</span>',    id: "del"},
-            // {title: '<span>Rename</span>', id: "rename"},
             {title: '<span>Pin/Unpin</span>', id: "pin"}],
         click: function(data, othis){
             if(data.id=="add"){
@@ -98,12 +100,11 @@ layui.use(['dropdown', 'util', 'layer','laypage'], function(){
                     //window.location.replace("/del_note/"+$(this.elem).attr("value"));
                     DelNote($(this.elem).attr("value"));
                 }
-            // }else if (data.id=="rename"){
-            //     Rename($(this.elem).attr("value"));
+            }else if (data.id=="retrace"){
+                Show_retrace_dialog($(this.elem).attr("value"));
             }else if (data.id=="pin"){
                 toggle_shortcut_file($(this.elem).attr("value"));
-            }
-           
+            }           
         }
     });
     
@@ -231,6 +232,45 @@ function SearchNote(){
     show_dialog("#search_dialog",false);
     $("#search_dialog").show(100);
 }
+
+function Show_retrace_dialog(id){
+    show_dialog("#retrace_dialog",true);
+    $("#retrace_dialog").show(100);
+    $("#note_tag").val(id);
+    $("#retrace_btn").unbind("click").bind("click",function(){
+        Retrace($("#retrace_tag").val());
+        event.preventDefault();	//阻滞二次提交
+    });
+}
+
+function Retrace(id){
+    $("#dev_ino_options").html("");
+    $.post("/retrace_note", {"file_name":$("#retrace_target").val() },function(data,status){
+        if(status=="success" && data.match(/^\!\!/)   ){
+            options_values=data.substr(2);
+            $("#dev_ino_options").append(options_values);
+            $("#assign_btn").unbind("click").bind("click",function(){
+                Assign_note($("#note_tag").val(),$("input[name='dev_ino']:checked").val());
+            });
+        }else{
+            alert("not found"+data.substr(2));
+        }
+    });
+}
+
+function Assign_note(note_tag,dev_ino){
+    $.post("/assign_note",{"note_tag": note_tag,"dev_ino":dev_ino},function(data,status){
+        $("#retrace_dialog").hide(100);
+        if(status=="success" && data.match(/^\!\!/) ){
+            alert("done");
+            $("#"+note_tag).remove();
+        }else{
+            alert("failed:"+data.substr(2));
+        }
+    })
+   
+}
+
 // for tinymce
 tinymce.init({
     selector: '#note_content',
@@ -340,12 +380,13 @@ function toggle_shortcut_folder(id){
 </div>
 
 <div class="{{.wrap_class}}">
-    <h1 align="center" style="margin: 1em;">
-       File Notes
+    <h1>
+       Orphan File Notes
     </h1>
-    <div class='layui-box layui-laypage' style="width:auto;margin:auto">
+    <div class='layui-box layui-laypage'>
         {{.page_bar | unescapeHtmlTag }}
-   </div>
+        </div>
+    <hr>
     <div class="file_containner">
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
             <legend>Files</legend>
@@ -353,7 +394,7 @@ function toggle_shortcut_folder(id){
      
         <button type="button" class="layui-btn layui-btn-primary" id="toggle_view" value="0">展开</button>
         {{range .notes}}
-        <div class="layui-collapse" lay-filter="test">
+        <div class="layui-collapse" lay-filter="test" id="{{.Tag}}">
             
             <div class="layui-colla-item">
                 <h2 class="layui-colla-title" > 
@@ -424,6 +465,40 @@ function toggle_shortcut_folder(id){
 		</form>
 	</div>
 </div>
+
+
+
+<!--retrace Dialog-->
+<!--for orphans-->
+<div id="retrace_dialog" class="dialog_wide">    
+	<div style="text-align:right; background-color:#CCC;">
+       <span class="close2"><img src="/public/css/close.gif" width="48" height="20" alt="X" /></span>
+    </div>
+	<div class="dialogContent">
+        <p>&nbsp;</p>
+		<h3 align="center" id="dialog_search_title">File name keyword </h3>
+		<form method="POST"	enctype="multipart/form-data" name="form_retrace"  id='form_retrace'>
+        <p>&nbsp;</p>
+        <div style="width: 720px;margin:auto">
+            <input type="text" name="target" id="retrace_target" style="width:600px;  height: 30px;"  />
+            <input type="button" class="commonButton" value="Search" id="retrace_btn" style="width:100px;">
+        </div>	
+        <br/>
+        <div style="width: 720px;margin:auto">
+            <p>Found Files:</p>
+            <div id="dev_ino_options" >            
+            </div>
+            <input type="hidden" name="note_tag" value="" id="note_tag">
+        </div>
+        <br/><br/>
+        <p align="center"> 
+            <input type="button" class="commonButton buttonCancel" value="Cancel" > &nbsp; &nbsp;&nbsp; &nbsp;
+            <input type="button" class="commonButton" value="Assign" id="assign_btn">
+        </p> 
+		</form>
+	</div>
+</div>
+
 
 <div style="display:none" id="shortcut_status">
 </div>

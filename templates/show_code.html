@@ -1,18 +1,47 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" type="text/css" href="/public/css/editor.css" />
     <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
-    <link rel="stylesheet" href="/public/css/monokai-sublime.css">
+    <link rel="stylesheet" href="/public/css/atom-one-light.min.css">
+    <script src="/public/layui/layui.js" charset="utf-8"></script>
     <script src="/public/js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <title>Filegai</title>
+    <style>
+        body{background-color: #AAA;}
+    </style>
 </head>
 <body>
+    <div class="top_bar">
+        <ul class="top_bar_left">
+            <li><a href='/list' class="active">Files</a></li>
+            <li><a href="/articles/1">Articles</a></li>
+            <li><a href="/file_notes/1">Notes</a></li>
+            <li><a href="/list_image/1">Images</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href='/'>Status</a></li> 
+        </ul>
+        <ul class='top_bar_right'>
+            <li id="btn_workspace"> 
+                <a href="#"><!--i class="layui-icon layui-icon-down layui-font-12"></i-->workspace </a>
+            </li>
+            <li><a href="/gallery/{{.dev_ino}}">Gallery</a></li>    
+           
+        </ul> 
+    </div>
+
+
+<div style="width: 100%; background-color: #aaa; text-align: center; font-size: 1.5em;padding: 10px"> {{.file_name}} </div>
 <div class="code_page">
-<pre class="code_wrap">
+<pre class="{{.wrap_class}}">
 <code class="{{.code_type}}">
 {{.code_content}}
 </code></pre>
 </div>
+
+
 </body>
 </html>

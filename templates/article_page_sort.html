@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Filegai-Article</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/article.css" />
+    <link rel="stylesheet" type="text/css" href="/public/layui/css/layui.css" media="all">
+<style>
+.page_to_sort{margin-left:2em; margin-right:2em;margin-top:10px;
+    list-style: none;  border: 1px solid #ccc;border-radius: 5px; cursor: move;
+}
+</style>
+   
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+
+<script>
+function DoSort(){
+    order_str="";
+    $(".page_to_sort").each(function(id){
+        var tag=$(this).attr("id");
+        order_str += tag+":"+(9999-id)+";"
+    });
+    $.post("/article_page_sort",{'order_str' : order_str},function(data,status){
+        if(status=="success" && data.match(/\!\!/)){
+            alert("Done!");
+            window.location='/show_article/'+$("#article_tag").val();
+        }else{
+            alert("failed:"+data.substr(2));	
+        }			
+    });
+}
+
+$(function(){	
+	$("#page_list").sortable();
+	$("#page_list").disableSelection();
+});
+
+</script>
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list'>Files</a></li>
+        <li><a href="/articles/1" class="active">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li> 	
+    </ul>  
+    <ul class='top_bar_right'>
+        <li><a href="javascript: DoSort();" id="Apply">Apply</a></li>        
+    </ul> 
+</div>
+
+<div class="{{.wrap_class}} content_view">
+    <input type="hidden" id="article_tag" value="{{.article_tag}}">
+    {{with .article}}
+    <div class="note_rf_title">
+       {{.Title}}
+    </div>
+    {{end}}
+    <div class="note_rf_abstract">
+        <p align="center"><input type="button" class="commonButton" onclick="javascript:DoSort();" value="Apply"></p>
+    </div>
+
+    <div id='page_list'>
+        {{range .pages}}
+        <div class='page_to_sort' id='{{.Pg_tag}}'>         
+            <div class="note_body">
+                {{.Data| unescapeHtmlTag}}
+            </div>
+        </div>
+        {{end}}
+    </div>   
+</div>
+
+</body>
+</html>

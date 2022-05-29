@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>*Article</title>
+        <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+        <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+        <link type="text/css" rel="stylesheet" href="/public/css/article.css" />
+        <link rel="stylesheet" type="text/css" href="/public/css/prism.css">
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+<script type="text/javascript" src="/public/js/md5.js"></script>
+<script src='/public/tinymce/tinymce.min.js'></script>
+<script src="/public/js/prism.js"></script>
+
+<script>
+function to_json(input){
+    // to deal with go gin unescape problem,annoying
+    var tmp = input.replaceAll(/\\u0026/g,"&");
+    tmp =tmp.replaceAll(/\'/g,"\"");
+    return JSON.parse(tmp);
+}
+
+tinymce.init({
+    selector: '#content_editor',
+    language:'zh_CN',
+    plugins: 'rmdiv mydiv nextline importcss print preview searchreplace autolink directionality visualblocks visualchars fullscreen image link  template code codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount imagetools textpattern paste emoticons autosave ',
+    toolbar: 'code undo redo | formatselect styleselect mydiv rmdiv nextline codesample image |  bold italic underline removeformat strikethrough |\
+     subscript superscript | alignleft aligncenter alignright |  lineheight  numlist bullist | \
+    link  fontselect fontsizeselect forecolor backcolor  blockquote| \
+    table  charmap hr pagebreak insertdatetime | fullscreen ',
+    fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
+    autosave_ask_before_unload: true,
+    height:window.innerHeight-150,
+    content_css: "/public/css/editor.css",
+    images_upload_url: '/image_upload',
+    formats: {  
+        pre:{block:"pre",classes:"code-block"},   
+    },
+    codesample_languages: [
+        {text: "Go",value:'go'},
+        {text: 'C', value: 'c'},       
+        {text: 'C++', value: 'cpp'},
+        {text: 'Ruby', value: 'ruby'},
+        {text: 'Python', value: 'python'},
+        {text: 'R',value:'r'},
+        {text: 'Perl',value:'perl'},
+        {text: 'Matlab',value:'matlab'},
+        {text: 'Julia',value:'julia'},
+        {text: 'JavaScript', value: 'javascript'},
+        {text: 'HTML/XML', value: 'markup'}, 
+        {text: 'CSS', value: 'css'},
+        {text: 'PHP', value: 'php'},
+        {text: 'Java', value: 'java'},
+        {text: 'C#', value: 'csharp'},
+        {text: 'Swift', value: 'swift'},
+        {text: 'JSON',value:'json'}
+    ],
+    codesample_global_prismjs: true
+
+});
+
+function PostContent(to_report){
+    $("#save_state").val("1");
+    var content = tinyMCE.get('content_editor').getContent();
+    if($("#pg_tag").val()==""){
+        // new
+        $.post("/article_page_add",{"content": content,"tag":$("#tag").val()},function(data,status){
+            if(status=="success" && data.match(/^\!\!/)){
+                pg_tag=data.substr(2);// get the tag
+                $("#pg_tag").val(pg_tag);
+                // update md5 digest
+                $("#content_md5_digest").val(hex_md5(content));
+            }else{
+                $("#save_state").val('0');
+                alert("not updated, message:"+data);               
+            }
+        });
+    }else{
+        
+        if ($("#content_md5_digest").val()==hex_md5(content)){
+            // no new update
+            return true;
+        }
+        
+        //update 
+        $.post("/article_page_update",{"pg_tag":$("#pg_tag").val(),"content":content,"tag":$("#tag").val()},function(data,status){
+            if(status=="success" && data.match(/^\!\!/)){
+                pg_tag=data.substr(2);// get the tag
+                // update md5 digest
+                $("#content_md5_digest").val(hex_md5(content));                
+            }else{
+                $("#save_state").val('0');
+                alert("error message:"+data);               
+            }
+        });
+    }
+    if ($("#save_state").val()=="0"){
+        $("#save_state").val("1");
+        return false;
+    }
+
+    return true;
+}
+$(function(){
+    $('#save').unbind("click").click(function(){  
+        ok=PostContent();
+        event.preventDefault();	//阻滞二次提交
+        if (ok){
+            // no new update
+            alert("done");  // uptodate
+        }   
+    });
+
+    $('#done').unbind("click").click(function(){  
+        ok=PostContent();
+        event.preventDefault();	//阻滞二次提交
+        if (ok){
+            // no new update
+            window.location.href="/show_article/"+$("#tag").val();
+        }
+    });
+
+});
+</script>
+
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list'>Files</a></li>
+        <li><a href="/articles/1" class="active">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li> 
+    </ul>
+    <ul class='top_bar_right'>
+    
+    </ul> 
+</div>
+
+<div class="{{.wrap_class}}">
+    <div class="note_rf_title">
+       {{.title}}
+     </div>
+    <textarea id="content_editor" name="article_page_content" >{{.content}}</textarea>
+    <input  type="hidden" id="tag" name="tag" value="{{.tag}}" />
+    <input  type="hidden" id="pg_tag" name="pg_tag" value="{{.pg_tag}}" />
+    <input type="hidden" id="content_md5_digest" value="">
+    <input type="hidden" id="save_state" value="1">
+    <input type="button" class="commonButton" value="Save" id="save" > &nbsp; &nbsp;&nbsp; &nbsp;
+    <input type="button" class="commonButton" value="Done" id="done">
+</div>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Filegai-Articles</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/filegai.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/article.css" />
+    <link rel="stylesheet" href="/public/layui/css/layui.css"  media="all">
+</head>
+<body>
+<script type="text/javascript" src="/public/js/jquery.js"></script>
+<script type="text/javascript" src="/public/js/jquery_ui.js"></script>
+
+<script>
+// for dialog showing
+function show_dialog(id,wide){
+    $(id).css("position","fixed");
+    if(wide){
+        $(id).css({'top':window.innerHeight/10,'left':window.innerWidth/10});
+    }else{
+        $(id).css({'top':window.innerHeight/3,'left':window.innerWidth/2-200});
+    }    
+    $(id).css("background-color",'white');
+    $(id).draggable();
+    $(id+' .buttonCancel').click(function(){
+        $(id).hide(100);
+    });
+    $(id+' .close2').click(function(){
+        $(id).hide(100);
+    });
+}
+
+function NewArticle(){
+    $("#new_title").val("");
+    show_dialog("#new_article_dialog",false);
+    $("#new_article_dialog").show(100);  
+    
+    //define the submit button actions  
+    $('#submit_new_article').unbind("click").click(function(){ 
+        // color and shelf_id not implemented
+        $.post("/new_article",{"title": $("#new_title").val(),"color":"","shelf_id":""},function(data,status){
+            if(status=="success" && data.match(/^\!\!(\w+)/)){
+                // alert("done:"+data.substr(2));
+                window.location.href="/show_article/"+data.substr(2);
+            }
+        });
+        $("#new_article_dialog").hide(100);
+        event.preventDefault();	//阻滞二次提交
+    });
+}
+
+function EditArticle(tag){
+    old_title=$("#title_"+tag).html();
+    $("#new_title").val(old_title);
+    show_dialog("#new_article_dialog",false);
+    $("#new_article_dialog").show(100);
+
+    $('#submit_new_article').unbind("click").click(function(){ 
+        // color and shelf_id not implemented
+        $.post("/edit_article",{"tag":tag,"title": $("#new_title").val(),"color":"","shelf_id":""},function(data,status){
+            if(status=="success" && data.match(/^\!\!(\w+)/)){
+                $("#title_"+tag).html( $("#new_title").val());                
+            }else{
+                alert("update failed");
+            }
+        });
+        $("#new_article_dialog").hide(100);
+        event.preventDefault();	//阻滞二次提交
+    });
+}
+
+function DelArticle(tag){
+    ok = confirm("Are you sure to delete this note?");
+    if(ok){
+        $.post("/del_article",{"tag":tag},function(data,status){
+            if(status=="success" && data.match(/^\!\!(\w+)/)){
+                $("#"+tag).remove();            
+            }else{
+                alert("update failed");
+            }
+        });       
+    }
+}
+
+function SearchArticle(){
+    show_dialog("#search_dialog");
+    $("#search_dialog").show(100);
+}
+
+var edit_locked=true;  
+function lock_edit(){
+	if(edit_locked){
+		$(".ref_list_opt").css("display","block");
+		edit_locked = !edit_locked ;
+        $("#locker").html("Lock");
+
+	}else{
+		$(".ref_list_opt").css("display","none");
+		edit_locked = !edit_locked ;
+        $("#locker").html("Unlock");
+	}
+}
+
+
+</script>
+
+
+<div class="top_bar">
+    <ul class="top_bar_left">
+        <li><a href='/list'>Files</a></li>
+        <li><a href="/articles/1" class="active">Articles</a></li>
+        <li><a href="/file_notes/1">Notes</a></li>
+        <li><a href="/list_image/1">Images</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href='/'>Status</a></li> 	
+    </ul>
+    <ul class='top_bar_right'>
+        <li><a href="javascript:NewArticle();">New</a></li>
+        <li><a href="javascript:SearchArticle();">Search</a></li>
+        <li><a href="javascript:lock_edit()" id="locker">Unlock</a></li>         
+    </ul> 
+</div>
+
+<div class="{{.wrap_class}}">
+    <h1 align="center" style="margin: 1em;">
+       Articles
+    </h1>
+    <div class='layui-box layui-laypage'>
+        {{.page_bar | unescapeHtmlTag }}
+    </div>
+    <ul id='ref_list'>
+        {{range .articles}}
+        <li class='ref' id='{{.Tag}}'>
+        <div class='ref_list_opt'>
+            <div class='ref_list_edit'>
+                <a href='javascript:EditArticle("{{.Tag}}")'><img src='/public/css/option.png'></a>
+            </div>
+            <div class='ref_list_del'>
+                <a href='javascript:DelArticle("{{.Tag}}")'><img src='/public/css/close.png'></a></div>
+            </div>
+            <div class='ref_title'>
+                <a href='/show_article/{{.Tag}}' id="title_{{.Tag}}">{{.Title}}</a>
+            </div>
+        <div class='ref_title_down'>
+            <div class='ref_footnote'>{{.Adate}}</div>
+        </div>
+        </li>
+        {{end}}
+    </ul>
+   
+</div>
+
+<!--Dialog-->
+<div id="new_article_dialog" class="dialog">    
+    <div style="text-align:right; background-color:#CCC;">
+        <span class="close2"><img src="/public/css/close.gif" width="48" height="20" alt="X" /></span>
+     </div>
+     <div class="dialogContent">
+         <p>&nbsp;</p>
+         <h3 align="center" id="dialog_new_title">Please Input Title of the New Article</h3>
+         <form action="/new_article" method="POST"	enctype="multipart/form-data" name="form_new_article"  id='form_new_article'>
+         <p>&nbsp;</p>
+         <p align="center"> <input type="text" name="target" id="new_title" style="width:280px;font-size:1.2em" /></p>	
+         <p>&nbsp;</p>
+         <p align="center"> 
+             <input type="button" class="commonButton buttonCancel" value="Cancel" > &nbsp; &nbsp;&nbsp; &nbsp;
+             <input type="submit" class="commonButton" value="Submit" id="submit_new_article">
+         </p> 
+         </form>
+     </div>
+</div>
+
+<!--Search Dialog-->
+<div id="search_dialog" class="dialog">    
+	<div style="text-align:right; background-color:#CCC;">
+       <span class="close2"><img src="/public/css/close.gif" width="48" height="20" alt="X" /></span>
+    </div>
+	<div class="dialogContent">
+        <p>&nbsp;</p>
+		<h3 align="center" id="dialog_search_title">Please fill in the keywords to search </h3>
+		<form action="/search_article" method="POST"	enctype="multipart/form-data" name="form_search"  id='form_search'>
+        <p>&nbsp;</p>
+        <p align="center"> <input type="text" name="target" id="search_target" style="width:280px;font-size:1.2em" /></p>	
+        <p>&nbsp;</p>
+        <p align="center"> 
+            <input type="button" class="commonButton buttonCancel" value="Cancel" > &nbsp; &nbsp;&nbsp; &nbsp;
+            <input type="submit" class="commonButton" value="Search" id="submit_search">
+        </p> 
+		</form>
+	</div>
+</div>
+<div style="display:none" id="shortcut_status">
+</div>
+</body>
+</html>
