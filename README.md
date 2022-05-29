@@ -1,4 +1,4 @@
-# Filegai : A system for taking notes for the of local files
+# Filegai : A system for taking notes for the local files
 
 ## Features
 1. Note taking for local files, note integration with file browsing.
