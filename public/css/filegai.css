@@ -6,22 +6,73 @@ body {
 }
 .content_wrap{
     width: 1002px;
-    margin: auto;
+    margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2em;
 }
 
-table{width: 1000px; margin: auto;}
-tr.tab_header td{border_bottom: 1px solid #777777; background-color: #dddddd}
-tr.tab_line td{border_bottom:1px solid #777777;background-color:#efefef}
+.content_wrap_wide{
+    width: 1500px;
+    margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2em;
+}
+.content_wrap_wider{
+    width: 2000px;
+    margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2em;
+}
+
+.content_view{
+/* this is for the file note content*/
+	font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+	font-size: 1.0em;
+	color:black;
+}
+.content_view h1{
+	font-size: 3.5em;
+	font-weight: bold;
+	margin-top: 2.0em;
+	margin-bottom:1.0em;
+}
+.content_view h2{
+	font-size: 2.5em;
+	font-weight:bold;
+	margin-top: 1.5em;
+	margin-bottom:1.0em;
+}
+.content_view h3{
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-top: 1.0em;
+	margin-bottom:0.5em;
+}
+.content_view h4{
+	margin-top:1.0em;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+/* table{width: 1000px; margin: auto;}
+tr.tab_header td{border-bottom: 1px solid #777777; background-color: #dddddd}
+tr.tab_line td{border-bottom:1px solid #777777;background-color:#efefef} */
+
+.top_bar {
+	background-color: #333;
+	height: 20px;
+	padding-top: 5px
+}
 
 ul.top_bar_left {
+	height: 20px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #FFF;
 	float: left;
-	margin-top: 3px;
-	margin-left:20px;
+	margin: 0px;
 	list-style-type: none;
-	width: 500px;
+	width: 450px;
 }
 
 
@@ -41,15 +92,19 @@ ul.top_bar_left li a:hover{
 	text-decoration:none;
 }
 
+ul.top_bar_left li a.active{
+	color:#00BB77;
+}
+
 ul.top_bar_right {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #FFF;
 	float: right;
 	margin-right: 20px;
-    margin-top: 3px;
+    margin-top: 0px;	
     list-style-type: none;
-	width: 200px;
+	width: 380px;
 }
 
 ul.top_bar_right li{
@@ -70,22 +125,15 @@ ul.top_bar_right li a:hover{
 
 }
 
-.top_bar {
-	background-color: #333;
-	height: 25px;
-}
-
-
 .folder_containner{
-    width: 1000px;
+	width: auto;
     margin: auto;
     font-size: 14px;
     clear:both
-
 }
 
 ul.folder_list{
-    width:1000px;
+    width:auto;
     clear: both;
     margin: auto;
     padding:0
@@ -94,37 +142,59 @@ ul.folder_list{
 ul.folder_list li{
 	font-size: 14px;
     display: inline;
-	width: 245px;
+	width: 242px;
     text-align: center;
     border: 1px solid #777777;
+	margin: 2px;
+	border-radius:3px;
     background-color: #efefef;
-    height: 40px;
-    margin:0px;
+    height: 30px;
+    margin:3px;
     padding-top: 10px;
 	float: left;
+
 }
 
 ul.folder_list li a,ul.folder_list li a:visited, ul.folder_list li a:link{
-	display: block;
-	width:100%;
-	height:100%;
-	color:#444488;
+	display: inline-block;
+	height:21px;
+	color:#444888;
 	text-decoration:none;
+	margin:0px;
 }
 
 ul.folder_list li a:hover{
 	color:#00BB77;
 	text-decoration:underline;
+	margin:0px;
 }
 
-ul.file_containner{
+.pinned_folder{
+	display: inline-block;
+	background-image: url("/public/css/goldstar.png");	
+	width: 21px;
+	height:20px;
+}
+.stashed_folder{
+	display: inline-block;
+	background-image: url("/public/css/location.png");	
+	height:21px;
+	width: 15px;
+}
+.unpinned_folder{
+	background-image: none;
+	width: 15px;
+	height: 21px;
+}
+
+/* ul.file_containner{
     font-size: 14px;
     width:1000px;
     clear:both;
     margin:auto
-}
+} */
 
-td.file_name{
+/* td.file_name{
 	height: 1.5 em;
 	padding: 4px
 }
@@ -141,7 +211,7 @@ td.file_name a, td.file_name a:link, td.file_name a:visited{
 td.file_name a:hover{
 	color: #00BB77; 
 	text-decoration: none;
-}
+} */
 
 
 /* for show_code.erb */
@@ -155,6 +225,10 @@ pre.code_wrap{
 	font-family:  Menlo, Consolas, 'Courier New', Courier, monospace;	
 	width:1024px;
 	margin: auto;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	background-color: #fafafa;
+	padding: 1em;
 }
 
 .dialog{ 
@@ -256,15 +330,32 @@ pre.code_wrap{
 	clear:none;
 }
 .pinned{
-	background-image: url("/public/css/star.png");
-	
-	width: 40px;
-	height: 40px;
+	background-image: url("/public/css/goldstar.png");	
+	width: 21px;
+	height: 20px;
 }
 .unpinned{
 	background-image: none;
-	width: 40px;
-	height: 40px;
+	width: 21px;
+	height: 20px;
+}
+
+.stashed{
+	display:inline-block;
+	background-image: url("/public/css/location.png");	
+	height:21px;
+	width: 15px;
+}
+.unstashed{
+	display:none;
+	background-image: url("/public/css/location.png");	
+	height:21px;
+	width: 15px;
+}
+
+ul.shortcut_opt_list li{
+	font-size: 16px;
+	line-height: 2.5em;
 }
 
 .image_list{
@@ -273,11 +364,14 @@ pre.code_wrap{
     margin: auto;
 }
 
+
 .img_wrap{width:245px; margin: 25px; border: 1px solid #ccc; height: 350px; display: inline-block;overflow: hidden;}
 .img_self{width:245px; height: 300px; margin: auto; overflow: hidden;}
 .img_desc{width:245px; height:25px; text-align:center;margin: auto; overflow: hidden;font-size:14px; color:#777;}
 .img_options{width:245px; height:25px; text-align:center;margin: auto; overflow: hidden;font-size:14px; color:#777}
 .img_options a{color:#00BB77;cursor:pointer;}
 .img_option a:hover{color:#bd0be0;cursor:pointer;}
-
-.commonButton{height:25px; width:60px;}
+.commonButton{height:30px; width:60px;}
+.putButton{
+	width: 80px; height: 35px;float:right
+}

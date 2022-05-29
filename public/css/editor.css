@@ -1,20 +1,36 @@
-.blue{color:blue;}
-.red{color: red;}
-.green{color: green;}
-.highlight{color:#9617df;}
-.yellow{color:yellow;}
-
 /* The color palette is from OSX system*/
+.apple-bg-green{background-color: #b2e2a2;}
 .apple-bg-pink{background-color: #fd99bb;} 
+.apple-bg-fluo{background-color: #b4e605;}
 .apple-bg-purple{background-color: #dea6ed;}
 /*.apple-bg-purple{background-color: #e2b8ed;}EIcaption*/
-.apple-bg-green{background-color: #b2e2a2;}
-.apple-bg-fluo{background-color: #b4e605;}
 .apple-bg-blue{background-color: #a4d4f8;}
 .apple-bg-orange{background-color: #f8e29c;}
 .apple-bg-red{background-color: #ff5f57;}
 .apple-bg-orange{background-color: #ffbd2d;}
 .apple-bg-yellow{background-color: #f8e29c;}
+.blue{color:blue;}
+.red{color: red;}
+.green{color: green;}
+.highlight{color:#9617df;}
+
+pre.code-block{font-family: "Menlo","Consolas","Noto Mono","Courier New","Fixedsys","Deja Vu Sans Mono","WenQuanYi Micro Hei"; 
+    background-color: #f0f0f0; border-left:3px solid #aaa; padding:3px 10px 3px 10px;}
+    
+pre.exp-block{font-family:"Menlo", "Consolas","Noto Mono","Courier New","Fixedsys","Deja Vu Sans Mono","WenQuanYi Micro Hei"; border-left:3px solid #aaa; 
+    background-color: #f0f0f0; width:500px; padding:3px 10px 3px 10px;} 
+
+
+/*block styles*/
+div.blue-block{background-color: #d7eaf8; color: black; padding: 8px;  -moz-border-radius: 6px; border-radius: 6px; padding: 1.2em;	 }
+div.green-block{background-color: #b2e2a2; color: black; padding: 8px;  -moz-border-radius: 6px; border-radius: 6px;  padding: 1.2em;	 }
+div.pink-block{background-color: #efd9fd; color: black; padding: 8px;  -moz-border-radius: 6px; border-radius: 6px;  padding: 1.2em;	 }
+div.white-block{background-color: white; color: black;padding-left: 5px;padding-right: 5px; 
+    -moz-border-radius: 6px; border-radius: 6px; border: #ddd 2px solid;  padding: 1.2em;}
+div.black-block{background-color: black; color: white;padding: 8px;  -moz-border-radius: 6px; border-radius: 6px;  padding: 1.2em;	}
+div.sublime-block{background-color: #272822; color:#eee; padding: 8px;  -moz-border-radius: 6px; border-radius: 6px; padding: 1.2em;	}
+div.drop-shadow{-moz-box-shadow: 5px 5px 10px #888; -webkit-box-shadow: 5px 5px 10px #888; box-shadow: 5px 5px 10px #888;margin-top: 1em;margin-bottom: 1.5em;}
+img.boxed{display: inline-block; border: #aaa solid 1px; -moz-border-radius: 6px; border-radius: 6px;}
 
 /*The color palette is from sublime */
 .sublime-red{color:#f52672;}
@@ -25,20 +41,11 @@
 
 /*kindeditor*/
 .ke-bg-yellow{background-color: yellow;}
-.ke-grey-white{background-color: #222; color: white;}
-.ke-black-white{background-color: black; color: white;}
+.ke-bg-grey-white{background-color: #222; color: white;}
+.ke-bg-black-white{background-color: black; color: white;}
 .ke-black-yellow{background-color: black; color:yellow;}
+.yellow{color:yellow;}
 
 
-div.blue-block{background-color: #a4d4f8; color: black; padding: 8px;  -moz-border-radius: 6px; border-radius: 6px; }
-div.green-block{background-color: #b2e2a2; color: black; padding: 8px;  -moz-border-radius: 6px; border-radius: 6px; }
-div.sublime-block{background-color: #272822; padding-left: 5px; padding-right: 5px;}
-div.white-block{background-color: white; color: black;padding-left: 5px; padding-right: 5px;}
-div.black-block{background-color: black; color: white;padding: 8px;  -moz-border-radius: 6px; border-radius: 6px; }
-pre.code-block{font-family: "Menlo","Consolas","Noto Mono","Courier New","Fixedsys","Deja Vu Sans Mono","WenQuanYi Micro Hei"; 
-background-color: #f0f0f0; border-left:3px solid #aaa; padding:3px 10px 3px 10px;}
-
-pre.exp-block{font-family:"Menlo", "Consolas","Noto Mono","Courier New","Fixedsys","Deja Vu Sans Mono","WenQuanYi Micro Hei"; border-left:3px solid #aaa; 
-background-color: #f0f0f0; width:500px; padding:3px 10px 3px 10px;} 
 
 

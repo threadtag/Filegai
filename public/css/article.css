@@ -1,0 +1,25 @@
+#ref_options{margin-top:10px; margin-bottom: 20px;margin:auto; width: 120px;}
+#shlf_id{display: inline-block; }
+#ref_list{padding: 0px; border-top: 4px solid #aaa;}
+
+.ref{margin-top: 3px;list-style: none;border-bottom:1px dashed #ccc;  padding: 5px 10px 5px 10px;} 
+.ref_title{clear:both; padding-left: 10px;padding-right: 10px;}
+.ref_title a,.ref_title a:visited,.ref_title a:link{font-weight: bold;color:black; text-decoration: none; font-size: 1.2em; width: 80%; min-width: 540px; text-align: justify; padding-right: 60px;}
+.ref_title a:hover{color:red;}
+.ref_title_down{color:#777; padding-left: 10px;padding-right: 10px;}
+.rf_journal{font-weight: bold;}
+.rf_abstract{margin-top: 0.8em; line-height: 1.2em;text-align: justify;padding-left: 10px;padding-right: 10px;}
+.ref_footnote{font-size: 0.8em;padding-right: 0.5em;text-align: left;width: 100%;}
+
+.ref_list_opt{width: 100%; height:20px; display: none;}
+.ref_list_edit{width:15px;float: left; clear:both;}
+.ref_list_del{width :15px; float: right;}
+
+.note_rf_title{font-size:24px; font-weight: bold; color:black; text-align: center; margin-top: 1em; margin-bottom: 0.5em;}
+.note_rf_abstract{font-size: 1.0em; text-align: justify;  border-bottom: 3px solid #333; padding: 10px; padding-bottom: 10px; margin-bottom: 15px;margin-top: 15px;}
+.ref_note{margin-top: 3px; list-style: none;border-bottom:1px dashed #ccc;  padding: 5px 10px 5px 10px; }
+.note_body{width: 100%; line-height: 1.5em;color:#222} 
+.note_body ul li{list-style: disc;line-height: 1.5em;}
+.note_body ol li{list-style:decimal; line-height: 1.5em;}
+.note_body ul, .note_body ol{ margin-left: 2em;}
+.note_body p{line-height: 1.5em; margin-top:0.5em;}
